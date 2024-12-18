@@ -1,0 +1,166 @@
+﻿@page "/dashboard"
+@using System.Globalization
+@inject IJSRuntime JS
+@inject NavigationManager Navigation
+
+<div class="container-fluid w-screen">
+    <!-- Sidebar -->
+    <Sidebar></Sidebar>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Top Stats Section -->
+        <div class="row py-4 text-center">
+            <div class="col-md-3">
+                <div class="card shadow-sm p-3">
+                    <h4>€ @SalesVolume</h4>
+                    <p class="text-muted">SALES VOLUME</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card shadow-sm p-3">
+                    <h4>@Orders</h4>
+                    <p class="text-muted">ORDERS</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card shadow-sm p-3">
+                    <h4>@TicketsSold</h4>
+                    <p class="text-muted">TICKETS SOLD</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card shadow-sm p-3">
+                    <h4>@EventViews</h4>
+                    <p class="text-muted">EVENT VIEWS</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="row py-4">
+            <div class="col-md-6">
+                <div class="card p-3 shadow-sm">
+                    <h5>Tickets Sold Over Time</h5>
+                    <canvas id="ticketsChart"></canvas>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card p-3 shadow-sm">
+                    <h5>Sales Volume (€)</h5>
+                    <canvas id="salesChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Calendar and Event URL -->
+        <div class="row py-4">
+            <div class="col-md-6">
+                <div class="card p-3 shadow-sm">
+                    <h5>Event Calendar</h5>
+                    <input type="date" class="form-control" @bind="SelectedDate" />
+                    <p class="mt-2 text-muted">Selected Date: @SelectedDate.ToShortDateString()</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card p-3 shadow-sm">
+                    <h5>Event URL</h5>
+                    <input type="text" class="form-control" @bind="EventUrl" />
+                    <div class="mt-3">
+                        <a href="#" class="btn btn-primary btn-sm"><i class="fab fa-facebook"></i> Facebook</a>
+                        <a href="#" class="btn btn-info btn-sm"><i class="fab fa-linkedin"></i> LinkedIn</a>
+                        <a href="#" class="btn btn-danger btn-sm"><i class="fab fa-google-plus"></i> Google+</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- New Graphs for Event Page Visits and Ticket Registrations -->
+        <div class="row py-4">
+            <div class="col-md-6">
+                <div class="card p-3 shadow-sm">
+                    <h5>Event Page Visits</h5>
+                    <canvas id="eventPageVisitsChart"></canvas>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card p-3 shadow-sm">
+                    <h5>Registrations by Ticket Type</h5>
+                    <canvas id="ticketRegistrationChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private decimal SalesVolume = 1250.50m;  // Placeholder data
+    private int Orders = 23;
+    private int TicketsSold = 150;
+    private int EventViews = 347;
+    private DateTime SelectedDate = DateTime.Today;
+
+    private string EventUrl = "http://attendize.website/e/1/att";
+
+    private Timer? _timer;
+
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            InitializeCharts();
+            StartAutoUpdate();
+        }
+        return base.OnAfterRenderAsync(firstRender);
+    }
+
+    private void StartAutoUpdate()
+    {
+        _timer = new Timer(UpdateStats, null, 0, 5000); // Update every 5 seconds
+    }
+
+    private void UpdateStats(object state)
+    {
+        // Simulate data update
+        SalesVolume += 10.50m;  // Increment sales volume
+        Orders += 1;            // Increment orders
+        TicketsSold += 2;       // Increment tickets sold
+        EventViews += 5;        // Increment event views
+
+        // New data for the charts after update
+        var updatedTicketsData = new[] { TicketsSold, TicketsSold + 10, TicketsSold + 20, TicketsSold + 30, TicketsSold + 40 };
+        var updatedSalesData = new[] { SalesVolume, SalesVolume + 200, SalesVolume + 300, SalesVolume + 400, SalesVolume + 500 };
+        var updatedEventPageVisitsData = new[] { 50, 60, 75, 90, 100 };
+        var updatedTicketRegistrationData = new[] { 20, 30, 40, 50, 60 };
+
+        // Update charts with new data
+        InvokeAsync(() =>
+        {
+            // Update the charts by calling JavaScript
+            JS.InvokeVoidAsync("updateCharts", updatedTicketsData, updatedSalesData);
+            JS.InvokeVoidAsync("updateEventPageVisits", updatedEventPageVisitsData);
+            JS.InvokeVoidAsync("updateTicketRegistrations", updatedTicketRegistrationData);
+
+            StateHasChanged(); // Trigger a UI update
+        });
+    }
+
+
+    private void InitializeCharts()
+    {
+        var ticketsData = new[] { 10, 25, 40, 75, 150 }; // Example ticket sales data
+        var salesData = new[] { 200, 400, 600, 900, 1250 }; // Example sales data
+        var eventPageVisitsData = new[] { 50, 60, 75, 90, 100 }; // Example event page visits data
+        var ticketRegistrationData = new[] { 20, 30, 40, 50, 60 }; // Example ticket registrations data
+
+        // Call JavaScript to render charts
+        JS.InvokeVoidAsync("renderCharts", ticketsData, salesData);
+        JS.InvokeVoidAsync("renderEventPageVisitsChart", eventPageVisitsData);
+        JS.InvokeVoidAsync("renderTicketRegistrationChart", ticketRegistrationData);
+    }
+
+    public void Dispose()
+    {
+        _timer?.Dispose(); // Cleanup timer when the component is disposed
+    }
+}

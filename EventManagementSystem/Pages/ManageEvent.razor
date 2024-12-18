@@ -1,0 +1,107 @@
+﻿@page "/manage-events"
+@using ClassLibraryDal
+@inject EventService EventService
+@inject NavigationManager Navigation
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Manage Events</h3>
+        <button class="btn btn-success" @onclick="NavigateToAddEvent">Add Event</button>
+    </div>
+
+    @if (events != null && events.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>
+                            <input type="checkbox" @onclick="ToggleAll" />
+                        </th>
+                        <th>ID</th>
+                        <th>Event Name</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Description</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var eventItem in events)
+                    {
+                        <tr>
+                            <td>
+                                <input type="checkbox" @bind="eventItem.IsSelected" />
+                            </td>
+                            <td>@eventItem.Id</td>
+                            <td>@eventItem.Name</td>
+                            <td>@eventItem.Date.ToShortDateString()</td>
+                            <td>@eventItem.Time</td>
+                            <td>@eventItem.Description</td>
+                            <td>
+                                <button class="btn btn-primary btn-sm" @onclick="() => ViewEvent(eventItem.Id)">View</button>
+                                <button class="btn btn-info btn-sm mx-1" @onclick="() => EditEvent(eventItem.Id)">Edit</button>
+                                <button class="btn btn-danger btn-sm" @onclick="() => DeleteEvent(eventItem.Id)">Delete</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <button class="btn btn-danger" @onclick="DeleteSelectedEvents">Delete Selected</button>
+    }
+    else
+    {
+        <p class="text-center text-muted">No events available.</p>
+    }
+</div>
+
+@code {
+    private List<Event> events = new();
+    private bool selectAll = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        events = await EventService.GetEvents();
+    }
+
+    private void NavigateToAddEvent()
+    {
+        Navigation.NavigateTo("/create-event");
+    }
+
+    private void ViewEvent(int id)
+    {
+        Navigation.NavigateTo($"/view-event/{id}");
+    }
+
+    private void EditEvent(int id)
+    {
+        Navigation.NavigateTo($"/edit-event/{id}");
+    }
+
+    private async Task DeleteEvent(int id)
+    {
+        await EventService.DeleteEvent(id);
+        events = await EventService.GetEvents();
+    }
+
+    private void ToggleAll()
+    {
+        selectAll = !selectAll;
+        foreach (var ev in events)
+        {
+            ev.IsSelected = selectAll;
+        }
+    }
+
+    private async Task DeleteSelectedEvents()
+    {
+        var selectedIds = events.Where(e => e.IsSelected).Select(e => e.Id).ToList();
+        if (selectedIds.Any())
+        {
+            await EventService.DeleteMultipleEvents(selectedIds);
+            events = await EventService.GetEvents();
+        }
+    }
+}
