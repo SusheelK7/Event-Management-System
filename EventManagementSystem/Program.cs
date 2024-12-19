@@ -20,7 +20,7 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
-
+builder.Services.AddSignalR();
 builder.Services.AddScoped<EventService>();
 
 var app = builder.Build();
@@ -47,6 +47,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 app.MapBlazorHub();
+
 app.MapFallbackToPage("/_Host");
 
 app.Run();

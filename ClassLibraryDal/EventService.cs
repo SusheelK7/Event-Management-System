@@ -10,6 +10,7 @@ namespace ClassLibraryDal
     {
         // Thread-safe collection to hold events
         private static readonly List<Event> events = new List<Event>();
+       
 
         // Simulating async data fetching
         public async Task<List<Event>> GetEvents()
@@ -18,6 +19,7 @@ namespace ClassLibraryDal
             return events;
         }
 
+        
         // Simulating async event creation
         public async Task CreateEvent(Event newEvent)
         {

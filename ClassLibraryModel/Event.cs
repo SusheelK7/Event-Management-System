@@ -3,10 +3,11 @@
     public class Event
     {
         public int Id { get; set; }
+        public string? Title { get; set; }
+        public string? Description { get; set; }
         public string? Name { get; set; }
         public DateTime Date { get; set; }
         public string? Time { get; set; }
-        public string? Description { get; set; }
         public bool IsSelected { get; set; }
         public string? TimeZone { get; set; }
         public TimeSpan? StartTime { get; set; }  // Change to TimeSpan
@@ -18,6 +19,8 @@
         public string? CustomerName { get; set; }
         public string? Mobile { get; set; }
         public string? Email { get; set; }
+
+        public string? ServiceType { get; set; }
         public string Status
         {
             get
