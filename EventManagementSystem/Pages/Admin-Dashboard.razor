@@ -6,14 +6,14 @@
 <div class="container-fluid w-screen">
     <!-- Sidebar -->
     <Sidebar></Sidebar>
-
+    
     <!-- Main Content -->
     <div class="container">
         <!-- Top Stats Section -->
         <div class="row py-4 text-center">
             <div class="col-md-3">
                 <div class="card shadow-sm p-3">
-                    <h4>€ @SalesVolume</h4>
+                    <h4>pkr @SalesVolume</h4>
                     <p class="text-muted">SALES VOLUME</p>
                 </div>
             </div>
@@ -26,13 +26,13 @@
             <div class="col-md-3">
                 <div class="card shadow-sm p-3">
                     <h4>@TicketsSold</h4>
-                    <p class="text-muted">TICKETS SOLD</p>
+                    <p class="text-muted">Venues Reserved</p>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="card shadow-sm p-3">
                     <h4>@EventViews</h4>
-                    <p class="text-muted">EVENT VIEWS</p>
+                    <p class="text-muted">EVENT Revies</p>
                 </div>
             </div>
         </div>
@@ -41,13 +41,13 @@
         <div class="row py-4">
             <div class="col-md-6">
                 <div class="card p-3 shadow-sm">
-                    <h5>Tickets Sold Over Time</h5>
+                    <h5>Venues Reserved</h5>
                     <canvas id="ticketsChart"></canvas>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="card p-3 shadow-sm">
-                    <h5>Sales Volume (€)</h5>
+                    <h5>Sales Volume (pkr)</h5>
                     <canvas id="salesChart"></canvas>
                 </div>
             </div>
@@ -95,12 +95,12 @@
 
 @code {
     private decimal SalesVolume = 1250.50m;  // Placeholder data
-    private int Orders = 23;
-    private int TicketsSold = 150;
-    private int EventViews = 347;
+    private int Orders = 10;
+    private int TicketsSold = 79;
+    private int EventViews = 147;
     private DateTime SelectedDate = DateTime.Today;
 
-    private string EventUrl = "http://attendize.website/e/1/att";
+    private string EventUrl = "http://attendize.website/e/";
 
     private Timer? _timer;
 
@@ -124,8 +124,8 @@
         // Simulate data update
         SalesVolume += 10.50m;  // Increment sales volume
         Orders += 1;            // Increment orders
-        TicketsSold += 2;       // Increment tickets sold
-        EventViews += 5;        // Increment event views
+        TicketsSold += 2;       
+        EventViews += 5;       
 
         // New data for the charts after update
         var updatedTicketsData = new[] { TicketsSold, TicketsSold + 10, TicketsSold + 20, TicketsSold + 30, TicketsSold + 40 };
