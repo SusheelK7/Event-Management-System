@@ -4,7 +4,7 @@
     window.ticketsChart = new Chart(ctxTickets, {
         type: "line",
         data: {
-            labels: ["10th Apr", "13th Apr", "16th Apr", "19th Apr", "28th Apr"],
+            laubels: ["10th Apr", "13th Apr", "16th Apr", "19th Apr", "28th Apr"],
             datasets: [{
                 label: "Tickets Sold",
                 data: ticketsData,
@@ -106,5 +106,26 @@ function renderTicketRegistrationChart(data) {
                 borderWidth: 1,
             }]
         },
+    });
+}
+function initDemandingServicesChart(data) {
+    const ctx = document.getElementById('demandingServicesChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: ['Party Decorations', 'Party DJ', 'Ceremony Music', 'Uplighters', 'Photo Booth Hire'],
+            datasets: [{
+                data: data,
+                backgroundColor: ['#007bff', '#dc3545', '#ffc107', '#28a745', '#6f42c1']
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                }
+            }
+        }
     });
 }

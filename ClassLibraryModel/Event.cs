@@ -15,5 +15,22 @@
         public bool MultipleDates { get; set; }
         public string? Type { get; set; }
 
+        public string? CustomerName { get; set; }
+        public string? Mobile { get; set; }
+        public string? Email { get; set; }
+        public string Status
+        {
+            get
+            {
+                if (Date < DateTime.Today)
+                    return "Past";
+                else if (Date == DateTime.Today)
+                    return "Ongoing";
+                else
+                    return "Upcoming";
+            }
+        }
+
+
     }
 }

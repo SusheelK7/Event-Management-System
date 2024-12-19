@@ -68,6 +68,16 @@
             // Navigate to the dashboard on successful login
             nm.NavigateTo("/dashboard");
         }
+        if (loginModel.Email == "minahil@gmail.com" && loginModel.Password == "Minahil@1234")
+        {
+            // Navigate to the dashboard on successful login
+            nm.NavigateTo("/user-dashboard");
+        }
+        if (loginModel.Email == "taha@gmail.com" && loginModel.Password == "Taha@1234")
+        {
+            // Navigate to the dashboard on successful login
+            nm.NavigateTo("/user-dashboard");
+        }
         else
         {
             ErrorMessage = "Invalid email or password. Please try again.";

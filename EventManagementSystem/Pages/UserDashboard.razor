@@ -1,0 +1,118 @@
+﻿@page "/user-dashboard"
+@layout MainLayout
+@inject IJSRuntime JSRuntime
+@inject EventService EventService
+
+<div class="container mt-5">
+    <div class="row">
+        <!-- Summary Cards -->
+        <div class="col-md-3">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Total New Booking</h5>
+                    <h3 class="card-text">@events.Count(e => e.Status == "New")</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card text-white bg-danger mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Total Approved Booking</h5>
+                    <h3 class="card-text">@events.Count(e => e.Status == "Approved")</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card text-white bg-secondary mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Total Cancelled Booking</h5>
+                    <h3 class="card-text">@events.Count(e => e.Status == "Cancelled")</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Total Services</h5>
+                    <h3 class="card-text">5</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Chart Section -->
+        <div class="col-md-6">
+            <h4 class="text-center">Demanding Services</h4>
+            <canvas id="demandingServicesChart" width="200" height="200"></canvas>
+        </div>
+
+        <!-- Booking Details Table -->
+        <div class="col-md-6">
+            <h4 class="text-center">New Bookings</h4>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Booking ID</th>
+                        <th>Customer Name</th>
+                        <th>Mobile Number</th>
+                        <th>Email</th>
+                        <th>Booking Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var booking in events)
+                    {
+                        <tr>
+                            <td>@booking.Id</td>
+                            <td>@booking.CustomerName</td>
+                            <td>@booking.Mobile</td>
+                            <td>@booking.Email</td>
+                            <td>@booking.Date.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                            <td>
+                                <span class="badge bg-@GetBadgeClass(booking.Status)">
+                                    @booking.Status
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+    .event-list ul {
+        max-height: 400px;
+        overflow-y: auto;
+    }
+</style>
+
+@code {
+    private List<Event> events = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        events = await EventService.GetEvents() ?? new List<Event>();
+        await InvokeAsync(InitializeChart);
+    }
+
+    private async Task InitializeChart()
+    {
+        var data = new[] { 45.8, 29.2, 15, 5, 5 }; // Example chart data
+        await JSRuntime.InvokeVoidAsync("initDemandingServicesChart", data);
+    }
+
+    private string GetBadgeClass(string status) => status switch
+    {
+        "New" => "primary",
+        "Approved" => "success",
+        "Cancelled" => "danger",
+        _ => "secondary"
+    };
+}
