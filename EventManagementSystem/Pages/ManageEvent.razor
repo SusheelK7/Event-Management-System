@@ -3,16 +3,16 @@
 @inject EventService EventService
 @inject NavigationManager Navigation
 
-<div class="container mt-4">
+<div class="container mt-4" style="background-color: #f8f9fa; border-radius: 8px; padding: 20px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h3>Manage Events</h3>
-        <button class="btn btn-success" @onclick="NavigateToAddEvent">Add Event</button>
+        <h3 class="text-primary">Manage Events</h3>
+        <button class="btn btn-success shadow-sm" @onclick="NavigateToAddEvent">Add Event</button>
     </div>
 
     @if (events != null && events.Any())
     {
         <div class="table-responsive">
-            <table class="table table-bordered table-hover align-middle">
+            <table class="table table-striped table-hover align-middle" style="background-color: #ffffff; border-radius: 8px; overflow: hidden;">
                 <thead class="table-dark">
                     <tr>
                         <th>
@@ -39,16 +39,16 @@
                             <td>@eventItem.Time</td>
                             <td>@eventItem.Description</td>
                             <td>
-                                <button class="btn btn-primary btn-sm" @onclick="() => ViewEvent(eventItem.Id)">View</button>
-                                <button class="btn btn-info btn-sm mx-1" @onclick="() => EditEvent(eventItem.Id)">Edit</button>
-                                <button class="btn btn-danger btn-sm" @onclick="() => DeleteEvent(eventItem.Id)">Delete</button>
+                                <button class="btn btn-primary btn-sm shadow-sm" @onclick="() => ViewEvent(eventItem.Id)">View</button>
+                                <button class="btn btn-info btn-sm shadow-sm mx-1" @onclick="() => OpenEditDialog(eventItem)">Edit</button>
+                                <button class="btn btn-danger btn-sm shadow-sm" @onclick="() => DeleteEvent(eventItem.Id)">Delete</button>
                             </td>
                         </tr>
                     }
                 </tbody>
             </table>
         </div>
-        <button class="btn btn-danger" @onclick="DeleteSelectedEvents">Delete Selected</button>
+        <button class="btn btn-danger shadow-sm mt-3" @onclick="DeleteSelectedEvents">Delete Selected</button>
     }
     else
     {
@@ -56,9 +56,48 @@
     }
 </div>
 
+<!-- Modal Dialog -->
+@if (showEditDialog)
+{
+    <div class="modal d-block" style="background-color: rgba(0, 0, 0, 0.5);">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" style="border-radius: 12px; overflow: hidden;">
+                <div class="modal-header" style="background-color: #007bff; color: #fff;">
+                    <h5 class="modal-title">Edit Event</h5>
+                    <button type="button" class="btn-close btn-close-white" @onclick="CloseEditDialog"></button>
+                </div>
+                <div class="modal-body" style="background-color: #f8f9fa; padding: 20px;">
+                    <EditForm Model="selectedEvent" OnValidSubmit="SaveEvent">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Event Name</label>
+                            <InputText id="name" class="form-control shadow-sm" @bind-Value="selectedEvent.Name" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="date" class="form-label">Date</label>
+                            <InputDate id="date" class="form-control shadow-sm" @bind-Value="selectedEvent.Date" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="time" class="form-label">Time</label>
+                            <InputText id="time" class="form-control shadow-sm" @bind-Value="selectedEvent.Time" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <InputTextArea id="description" class="form-control shadow-sm" @bind-Value="selectedEvent.Description" />
+                        </div>
+                        <button type="submit" class="btn btn-success shadow-sm">Save</button>
+                        <button type="button" class="btn btn-secondary shadow-sm" @onclick="CloseEditDialog">Cancel</button>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
 @code {
     private List<Event> events = new();
     private bool selectAll = false;
+    private bool showEditDialog = false;
+    private Event selectedEvent = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -73,11 +112,6 @@
     private void ViewEvent(int id)
     {
         Navigation.NavigateTo($"/view-event/{id}");
-    }
-
-    private void EditEvent(int id)
-    {
-        Navigation.NavigateTo($"/edit-event/{id}");
     }
 
     private async Task DeleteEvent(int id)
@@ -103,5 +137,24 @@
             await EventService.DeleteMultipleEvents(selectedIds);
             events = await EventService.GetEvents();
         }
+    }
+
+    private void OpenEditDialog(Event eventToEdit)
+    {
+        selectedEvent = eventToEdit;
+        showEditDialog = true;
+    }
+
+    private void CloseEditDialog()
+    {
+        showEditDialog = false;
+        selectedEvent = new Event();
+    }
+
+    private async Task SaveEvent()
+    {
+        await EventService.UpdateEvent(selectedEvent);
+        events = await EventService.GetEvents();
+        CloseEditDialog();
     }
 }
