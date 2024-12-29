@@ -1,0 +1,95 @@
+﻿@page "/Invoice"
+@inject EventService EventService
+
+<h3>Invoice</h3>
+
+@if (selectedEvent == null)
+{
+    <div>
+        <label for="eventSelector">Select an Event:</label>
+        <select id="eventSelector" @onchange="LoadEvent">
+            <option value="">-- Select Event --</option>
+            @foreach (var evt in events)
+            {
+                <option value="@evt.Id">@evt.Name</option>
+            }
+        </select>
+    </div>
+}
+else
+{
+    <div class="invoice">
+        <h4>Invoice Details</h4>
+        <p><strong>Event Name:</strong> @selectedEvent.Name</p>
+        <p><strong>Date:</strong> @selectedEvent.Date.ToShortDateString()</p>
+        <p><strong>Location:</strong> @selectedEvent.Location</p>
+        <p><strong>Description:</strong> @selectedEvent.Description</p>
+        <p><strong>Price:</strong> $@selectedEvent.Price</p>
+        <p><strong>Total:</strong> $@selectedEvent.Price</p>
+
+        <button @onclick="ResetInvoice">Back to Event Selection</button>
+    </div>
+}
+
+<style>
+    .invoice {
+        border: 1px solid #ccc;
+        padding: 20px;
+        margin: 20px 0;
+        max-width: 400px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+        .invoice h4 {
+            margin-bottom: 20px;
+        }
+
+        .invoice p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+
+    button {
+        margin-top: 10px;
+        padding: 5px 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+    }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+</style>
+
+@code {
+    private List<Event> events = new List<Event>();
+    private Event? selectedEvent;
+
+    [Parameter]
+    public int EventId { get; set; }
+
+    private Event eventDetails;
+
+    protected override async Task OnInitializedAsync()
+    {
+        eventDetails = (await EventService.GetEvents()).FirstOrDefault(e => e.Id == EventId);
+    }
+
+
+    private async Task LoadEvent(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out int eventId))
+        {
+            selectedEvent = events.FirstOrDefault(evt => evt.Id == eventId);
+        }
+    }
+
+    private void ResetInvoice()
+    {
+        selectedEvent = null;
+    }
+}

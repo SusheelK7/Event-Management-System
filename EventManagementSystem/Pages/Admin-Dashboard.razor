@@ -1,12 +1,14 @@
 ﻿@page "/dashboard"
 @using System.Globalization
 @inject IJSRuntime JS
+@inject EventService EventService
 @inject NavigationManager Navigation
 
 <div class="container-fluid w-screen">
     <!-- Sidebar -->
     <Sidebar></Sidebar>
     
+
     <!-- Main Content -->
     <div class="container">
         <!-- Top Stats Section -->
@@ -90,6 +92,31 @@
                 </div>
             </div>
         </div>
+
+        <h3>Admin Dashboard</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Date</th>
+                    <th>Location</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var eventItem in events)
+                {
+                    <tr>
+                        <td>@eventItem.Name</td>
+                        <td>@eventItem.Date.ToShortDateString()</td>
+                        <td>@eventItem.Location</td>
+                        <td>
+                            <button @onclick="() => DeleteEvent(eventItem.Id)">Delete</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
     </div>
 </div>
 
@@ -99,6 +126,18 @@
     private int TicketsSold = 79;
     private int EventViews = 147;
     private DateTime SelectedDate = DateTime.Today;
+    private List<Event> events;
+
+    protected override void OnInitialized()
+    {
+        events = EventService.GetAllEvents();
+    }
+    
+    private void DeleteEvent(int id)
+    {
+        EventService.DeleteEvent(id);
+        events = EventService.GetAllEvents();
+    }
 
     private string EventUrl = "http://attendize.website/e/";
 

@@ -54,6 +54,7 @@ namespace ClassLibraryDal
             eventToUpdate.EndTime = updatedEvent.EndTime;     // Updated property
             eventToUpdate.Location = updatedEvent.Location;   // Updated property
             eventToUpdate.MultipleDates = updatedEvent.MultipleDates; // Updated property
+            eventToUpdate.Price = updatedEvent.Price;
         }
 
         // Simulating async event deletion

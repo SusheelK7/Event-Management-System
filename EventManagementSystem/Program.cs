@@ -22,6 +22,8 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
 builder.Services.AddSignalR();
 builder.Services.AddScoped<EventService>();
+builder.Services.AddSingleton<EventService>();
+
 
 var app = builder.Build();
 

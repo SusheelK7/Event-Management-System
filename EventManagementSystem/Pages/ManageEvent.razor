@@ -42,6 +42,7 @@
                                 <button class="btn btn-primary btn-sm shadow-sm" @onclick="() => ViewEvent(eventItem.Id)">View</button>
                                 <button class="btn btn-info btn-sm shadow-sm mx-1" @onclick="() => OpenEditDialog(eventItem)">Edit</button>
                                 <button class="btn btn-danger btn-sm shadow-sm" @onclick="() => DeleteEvent(eventItem.Id)">Delete</button>
+                                <button class="btn btn-dark btn-sm shadow-sm" @onclick="() => NavigateToInvoice(eventItem.Id)">Invoice</button>
                             </td>
                         </tr>
                     }
@@ -55,43 +56,6 @@
         <p class="text-center text-muted">No events available.</p>
     }
 </div>
-
-<!-- Modal Dialog -->
-@if (showEditDialog)
-{
-    <div class="modal d-block" style="background-color: rgba(0, 0, 0, 0.5);">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content" style="border-radius: 12px; overflow: hidden;">
-                <div class="modal-header" style="background-color: #007bff; color: #fff;">
-                    <h5 class="modal-title">Edit Event</h5>
-                    <button type="button" class="btn-close btn-close-white" @onclick="CloseEditDialog"></button>
-                </div>
-                <div class="modal-body" style="background-color: #f8f9fa; padding: 20px;">
-                    <EditForm Model="selectedEvent" OnValidSubmit="SaveEvent">
-                        <div class="mb-3">
-                            <label for="name" class="form-label">Event Name</label>
-                            <InputText id="name" class="form-control shadow-sm" @bind-Value="selectedEvent.Name" />
-                        </div>
-                        <div class="mb-3">
-                            <label for="date" class="form-label">Date</label>
-                            <InputDate id="date" class="form-control shadow-sm" @bind-Value="selectedEvent.Date" />
-                        </div>
-                        <div class="mb-3">
-                            <label for="time" class="form-label">Time</label>
-                            <InputText id="time" class="form-control shadow-sm" @bind-Value="selectedEvent.Time" />
-                        </div>
-                        <div class="mb-3">
-                            <label for="description" class="form-label">Description</label>
-                            <InputTextArea id="description" class="form-control shadow-sm" @bind-Value="selectedEvent.Description" />
-                        </div>
-                        <button type="submit" class="btn btn-success shadow-sm">Save</button>
-                        <button type="button" class="btn btn-secondary shadow-sm" @onclick="CloseEditDialog">Cancel</button>
-                    </EditForm>
-                </div>
-            </div>
-        </div>
-    </div>
-}
 
 @code {
     private List<Event> events = new();
@@ -156,5 +120,10 @@
         await EventService.UpdateEvent(selectedEvent);
         events = await EventService.GetEvents();
         CloseEditDialog();
+    }
+
+    private void NavigateToInvoice(int eventId)
+    {
+        Navigation.NavigateTo($"/invoice/{eventId}");
     }
 }

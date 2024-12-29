@@ -2,6 +2,9 @@
 @layout MainLayout
 @inject EventService EventService
 @inject NavigationManager Navigation
+@using ClassLibraryDal
+@using ClassLibraryModel
+
 
 <div class="container mt-5 p-5" style="background: linear-gradient(135deg, #1d3557, #457b9d); border-radius: 12px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);">
     <h3 class="text-center text-white mb-4">Create New Event</h3>
@@ -55,6 +58,12 @@
         await EventService.CreateEvent(newEvent);
         Navigation.NavigateTo("/manage-events");
        
+    }
+
+    private async Task SaveEvent()
+    {
+        await EventService.CreateEvent(newEvent);
+        newEvent = new Event(); // Reset form
     }
 
     private void NavigateBack()

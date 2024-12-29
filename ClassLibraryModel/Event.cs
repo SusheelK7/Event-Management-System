@@ -9,6 +9,7 @@
         public DateTime Date { get; set; }
         public string? Time { get; set; }
         public bool IsSelected { get; set; }
+        public decimal Price { get; set; }
         public string? TimeZone { get; set; }
         public TimeSpan? StartTime { get; set; }  // Change to TimeSpan
         public TimeSpan? EndTime { get; set; }    // Change to TimeSpan
